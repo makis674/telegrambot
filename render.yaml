@@ -2,15 +2,7 @@ services:
   - type: web
     name: telegrambot
     env: python
-    buildCommand: ""
-    startCommand: python main.py
-    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn -w 1 -b 0.0.0.0:$PORT src.main:app
     autoDeploy: true
-    envVars:
-      - key: TELEGRAM_TOKEN
-        value: 7514517889:AAHjBmv5LYplbLe182Quz8T1BKiWWwGdblc
-      - key: DISCORD_WEBHOOK_URL
-        value: https://discord.com/api/webhooks/1380237398268579870/fRHBfkGPSZWu7aqNVzeYkH7W6kab5ZDvPYaYLsl-YwaGUyidf8CgOBep8piDjnLWfGzs
-    ports:
-      - port: 10000
-        protocol: http
+
