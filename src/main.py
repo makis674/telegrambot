@@ -17,10 +17,27 @@ keywords = {
 @app.route("/", methods=["POST"])
 def handle_webhook():
     data = request.get_json()
-    print("📨 RAW incoming data:", data)
+    print("📥 RAW incoming data:", data)
 
     if not data or "message" not in data:
         return "No message", 200
+
+    msg = data["message"]
+    text = msg.get("text") or msg.get("caption") or ""
+
+    print("📝 Extracted text:", text)
+
+    if not text:
+        print("⚠️ No text/caption found in message")
+        return "empty", 200
+
+    urls = [word for word in text.split() if "youtube.com" in word or "youtu.be" in word]
+
+    # μπορείς να προσθέσεις εδώ επεξεργασία των URLs ή αποστολή στο Discord
+    print("🔗 Detected URLs:", urls)
+
+    return "ok", 200
+
 
     msg = data["message"]
     text = msg.get("text") or msg.get("caption") or ""
