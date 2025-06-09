@@ -31,4 +31,5 @@ def handle_webhook():
         print("⚠️ No text/caption found in message")
         return "empty", 200
 
-    urls = [word for word in text.split() if "youtube.com" in word or "youtu.be]()
+   urls = [word for word in text.split() if "youtube.com" in word or "youtu.be" in word]
+
