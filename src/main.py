@@ -33,10 +33,10 @@ def handle_webhook():
 
     urls = [word for word in text.split() if "youtube.com" in word or "youtu.be" in word]
 
-    # μπορείς να προσθέσεις εδώ επεξεργασία των URLs ή αποστολή στο Discord
     print("🔗 Detected URLs:", urls)
 
     return "ok", 200
+
 
 
     msg = data["message"]
