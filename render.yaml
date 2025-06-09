@@ -1,19 +1,10 @@
 services:
   - type: web
-    name: telegram-discord-bot
-    runtime: python
-    buildCommand: pip install -r src/requirements.txt
-    startCommand: python src/main.py
+    name: telegrambot
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python src/main.py"
     envVars:
-      - key: TELEGRAM_TOKEN
-        sync: false
-      - key: WEBHOOK_KENTRIKO
-        sync: false
-      - key: WEBHOOK_EPIVIOSI
-        sync: false
-      - key: WEBHOOK_EFEDREIA
-        sync: false
-      - key: WEBHOOK_YGEIA
-        sync: false
-      - key: WEBHOOK_GEOPOLITIKA
-        sync: false
+      - key: TOKEN
+        value: 7514517889:AAHjBmv5LYplbLe182Quz8T1BKiWWwGdblc
