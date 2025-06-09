@@ -1,41 +1,22 @@
-import os
-import requests
-from flask import Flask, request
-import subprocess
-
-app = Flask(__name__)
-
-# Load tokens and webhook URLs
-TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
-WEBHOOK_KENTRIKO = os.environ.get("WEBHOOK_KENTRIKO")
-WEBHOOK_PISTINE = os.environ.get("WEBHOOK_PISTINE")
-WEBHOOK_FITERNIDA = os.environ.get("WEBHOOK_FITERNIDA")
-WEBHOOK_XEPLA = os.environ.get("WEBHOOK_XEPLA")
-WEBHOOK_GEOPOLITIKA = os.environ.get("WEBHOOK_GEOPOLITIKA")
-
-# Keywords
-keywords = {
-    "ΚΕΝΤΡΙΚΟ": WEBHOOK_KENTRIKO,
-    "ΠΙΣΤΙΝΕΣ": WEBHOOK_PISTINE,
-    "FITERNIDA": WEBHOOK_FITERNIDA,
-    "ΧΕΠΛΑ": WEBHOOK_XEPLA,
-    "ΓΕΩΠΟΛΙΤΙΚΑ": WEBHOOK_GEOPOLITIKA
-}
-
-
 @app.route("/", methods=["POST"])
 def handle_webhook():
     data = request.get_json()
+    print("📨 RAW incoming data:", data)
 
     if not data or "message" not in data:
-        return "no message", 200
+        return "No message", 200
 
     msg = data["message"]
     text = msg.get("text") or msg.get("caption") or ""
+
+    print("📝 Extracted text:", text)
+
     if not text:
+        print("⚠️ No text/caption found in message")
         return "empty", 200
 
     urls = [word for word in text.split() if "youtube.com" in word or "youtu.be" in word]
+
     if urls:
         url = urls[0]
         try:
@@ -43,9 +24,9 @@ def handle_webhook():
                 ["yt-dlp", "--skip-download", "--print", "%(title)s", url],
                 text=True
             ).strip()
+            full_text = f"{title}\n{text}".upper()
         except:
-            title = ""
-        full_text = f"«{title}» {text}".upper()
+            full_text = text.upper()
     else:
         full_text = text.upper()
 
@@ -55,15 +36,12 @@ def handle_webhook():
             target_webhook = webhook
             break
 
+    print("📤 Sending to Discord webhook:", target_webhook)
+    print("📦 Payload:", full_text)
+
     requests.post(target_webhook, json={"content": full_text})
     return "ok", 200
 
-
-import os
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
 
 
 
