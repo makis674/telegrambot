@@ -1,42 +1,50 @@
-from flask import Flask, request
 import os
 import requests
-import subprocess
+from flask import Flask, request
 
 app = Flask(__name__)
 
-WEBHOOK_KENTRIKO = os.environ.get("WEBHOOK_KENTRIKO")
-WEBHOOK_YOUTUBE = os.environ.get("WEBHOOK_YOUTUBE")
-WEBHOOK_PORN = os.environ.get("WEBHOOK_PORN")
+# Ρύθμιση σταθερών
+BOT_TOKEN = "7514517889:AAHjBmv5LYplbLe182Quz8T1BKiWWwGdblc"
+DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1380237398268579870/fRHBfkGPSZWu7aqNVzeYkH7W6kab5ZDvPYaYLsl-YwaGUyidf8CgOBep8piDjnLWfGzs"
+RENDER_URL = "https://telegrambot-1003.onrender.com/"  # ⚠️ Προσαρμοσμένο για εσένα
 
-keywords = {
-    "PORN": WEBHOOK_PORN,
-    "YOUTUBE": WEBHOOK_YOUTUBE,
-}
+@app.route('/')
+def home():
+    return 'OK', 200
 
-@app.route("/", methods=["POST"])
-def handle_webhook():
+@app.route('/', methods=['POST'])
+def webhook():
     data = request.get_json()
-    print("📥 Raw incoming data:", data)
+    print("📥 Νέο μήνυμα:", data)
 
-    if not data or "message" not in data:
-        return "No message", 200
+    try:
+        message = data.get("message") or data.get("edited_message")
+        if not message:
+            return 'No message', 200
 
-    msg = data["message"]
-    text = msg.get("text") or msg.get("caption") or ""
+        text = message.get("text") or message.get("caption")
+        if not text:
+            print("⚠️ Χωρίς text ή caption")
+            return 'No content to send', 200
 
-    print("📝 Extracted text:", text)
+        payload = {
+            "content": text
+        }
+        response = requests.post(DISCORD_WEBHOOK_URL, json=payload)
+        print(f"✅ Εστάλη στο Discord: {response.status_code}")
+    except Exception as e:
+        print("❌ Σφάλμα:", e)
 
-    if not text:
-        print("⚠️ No text/caption found in message")
-        return "empty", 200
+    return 'OK', 200
 
-    urls = [word for word in text.split() if "youtube.com" in word or "youtu.be" in word]
-    print("🔗 Detected URLs:", urls)
+def set_webhook():
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/setWebhook"
+    response = requests.post(url, json={"url": RENDER_URL})
+    print(f"🌐 Webhook set: {response.status_code} {response.text}")
 
-    return "ok", 200
-    
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+if __name__ == '__main__':
+    set_webhook()
+    app.run(host='0.0.0.0', port=10000)
+
 
