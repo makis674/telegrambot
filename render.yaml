@@ -7,13 +7,13 @@ services:
     envVars:
       - key: TELEGRAM_TOKEN
         sync: false
-      - key: WEBHOOK_ΚΕΝΤΡΙΚΟ
+      - key: WEBHOOK_KENTRIKO
         sync: false
-      - key: WEBHOOK_ΕΠΙΒΙΩΣΗ
+      - key: WEBHOOK_EPIVIOSI
         sync: false
-      - key: WEBHOOK_ΕΦΕΔΡΕΙΑ
+      - key: WEBHOOK_EFEDREIA
         sync: false
-      - key: WEBHOOK_ΥΓΕΙΑ
+      - key: WEBHOOK_YGEIA
         sync: false
-      - key: WEBHOOK_ΓΕΩΠΟΛΙΤΙΚΑ
+      - key: WEBHOOK_GEOPOLITIKA
         sync: false
